@@ -1,41 +1,11 @@
-type interest = {
-    id: number
-    name: string
-}
-
-type updatedProfile = {
-    pseudo?: string
-    age?: string
-    city?: string
-    description?: string
-    interests?: []
-    pictures?: []
-}
-
-type Profile = {
-    id: number
-    pseudo: string
-    profile_image: string
-    looking_for?: string
-    city?: string
-    description?: string
-    age: string
-    interests?: interest[]
-    like?: string
-}
-
-type filterProfile = {
-    pseudo: string
-    city: string
-    gender: string
-    age: string | string[]
-}
-
 import moment from "moment";
+import { Profile, ProfileCard, UpdateProfile } from '../types/Profile.ts'
 
 export const profileServices = {
-    getProfile: async (id?: number): Promise<Profile> => {
-        const response = await fetch(`${import.meta.env.VITE_api_url}profile/${id}`);
+    getProfile: async (id?: number) => {
+        const response = await fetch(`${import.meta.env.VITE_api_url}profile/${id}`, {
+            credentials: 'include'
+        });
         if (!response.ok) throw new Error('Erreur de récupération des utilisateurs');
         const data: Profile = await response.json();
         data.age = moment().diff(moment(data.age), 'years').toString();
@@ -43,7 +13,7 @@ export const profileServices = {
         return data
     },
 
-    getAllProfile: async (filterProfile: filterProfile): Promise<Profile> => {
+    getAllProfile: async (filterProfile: ProfileCard): Promise<Profile[]> => {
         let ageParam = "all";
         if (Array.isArray(filterProfile.age)) {
             const startYear = moment().subtract(filterProfile.age[0], 'year').year().toString();
@@ -51,19 +21,21 @@ export const profileServices = {
             ageParam = `${startYear},${endYear}`;
         }
         const url = `${import.meta.env.VITE_api_url}profiles?pseudo=${filterProfile.pseudo}&city=${filterProfile.city}&gender=${filterProfile.gender}&age=${ageParam}`;
-        const response = await fetch(url);
+        const response = await fetch(url, {
+            credentials: "include"
+        });
         if (!response.ok) throw new Error('Erreur de récupération des utilisateurs');
         return response.json();
     },
 
-    updatedProfile: async (newProfile: updatedProfile) => {
-        console.log(JSON.stringify(newProfile))
+    updateProfile: async (updateProfile: UpdateProfile) => {
         const response = await fetch(`${import.meta.env.VITE_api_url}profile`, {
             method: "PATCH",
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(newProfile)
+            credentials: "include",
+            body: JSON.stringify(updateProfile)
         })
         const data: { bool: boolean } = await response.json();
         return data
@@ -71,7 +43,8 @@ export const profileServices = {
 
     deleteProfile: async () => {
         const response = await fetch(`${import.meta.env.VITE_api_url}profile`, {
-            method: "DELETE"
+            method: "DELETE",
+            credentials: "include",
         })
         const data: { bool: boolean } = await response.json();
         return data

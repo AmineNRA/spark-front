@@ -2,32 +2,24 @@ import { useEffect, useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import { profileServices } from './services/profileServices.js';
-type interest = {
-  id: number
-  name: string
-}
-type Profile = {
-  id: number
-  pseudo: string
-  profile_image: string
-  looking_for?: string
-  city?: string
-  description?: string
-  interests?: interest[]
-  like?: string
-}
+import { authServices } from './services/authServices.js';
+import { conversationServices } from './services/conversationServices.js';
+
+import { Conversation, Message } from './types/Conversation.js';
 
 function App() {
   const [count, setCount] = useState(0)
-  const [profile, setProfile] = useState<{ bool: boolean } | null>(null);
+  const [profile, setProfile] = useState<{ success: boolean } | null>(null);
 
-
+  const logtest = {
+    mail: 'bernard62@gmail.com',
+    password: "admin1234"
+  }
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const data = await profileServices.deleteProfile();
+        const data = await authServices.login(logtest);
         setProfile(data);
       }
       catch (error) {
@@ -36,8 +28,11 @@ function App() {
     };
     fetchProfile()
   }, [])
-
   console.log(profile)
+  const testLogOk = async () => {
+    const data = await conversationServices.getConversation(1);
+    console.log(data, 'login ok le client peut recup les données')
+  }
 
   return (
     <>
@@ -54,6 +49,7 @@ function App() {
         <button onClick={() => setCount((count) => count + 1)}>
           count is {count}
         </button>
+        <button onClick={testLogOk}>Log ok ?</button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
