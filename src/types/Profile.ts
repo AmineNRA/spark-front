@@ -3,14 +3,19 @@ export type Interest = {
     name: string
 }
 
+export type Image = {
+    position: string,
+    url: string
+}
+
 export type Profile = {
     id: number;
     pseudo: string;
     mail: string;
     password: string;
-    pictures?: string;
-    age?: string;
-    gender?: "Homme" | "Femme" | "Non précisé";
+    pictures?: Image[] | string;
+    age: string;
+    gender: "Homme" | "Femme" | "Non genré";
     looking_for?: "Homme" | "Femme" | "Amitié";
     city: string;
     description?: string

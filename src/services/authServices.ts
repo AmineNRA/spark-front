@@ -9,7 +9,7 @@ export const authServices = {
             },
             body: JSON.stringify(newProfile)
         });
-        const data: { message: string } = await response.json();
+        const data: { success: boolean } = await response.json();
         return data;
     },
     login: async (loginInfo: LoginProfile) => {
